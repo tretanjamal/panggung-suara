@@ -124,6 +124,7 @@
         '<div class="menu-bawah">' +
           '<button class="btn btn-emas" data-a="cert"' + (selesai ? '' : ' disabled') + '>' + G.ikon(selesai ? 'medal' : 'lock', 28) + '<span>' + STR.hub.sertifikat + '</span></button>' +
           '<button class="btn btn-teal" data-a="poster"' + (selesai ? '' : ' disabled') + '>' + G.ikon(selesai ? 'img' : 'lock', 28) + '<span>' + STR.hub.poster + '</span></button>' +
+          '<button class="btn btn-ungu" data-a="jurnal">' + G.ikon('bk', 28) + '<span>' + STR.hub.jurnal + '</span></button>' +
           (selesai ? '' : '<span class="menu-catatan">' + STR.hub.kunciSertifikat + '</span>') +
         '</div>' +
       '</div>', 'latar');
@@ -132,6 +133,7 @@
     G.aksi.cert = function () { G.ke(G.layarSertifikat); };
     G.aksi.poster = G.poster;
     G.aksi.guru = G.catatanGuru;
+    G.aksi.jurnal = G.jurnalModal;
     if (berikut >= 0) G.petunjuk($('.lv[data-i="' + berikut + '"]'));
   };
   G.layarMenu.namaLayar = 'menu';
@@ -148,7 +150,7 @@
     G.P.s[i] = Math.max(G.P.s[i], s); G.P.salah[i] = salah || 0; G.simpan();
     G.ke(function () {
       G.dalamMenu = false;
-      var akhir = i === 4;
+      var akhir = i === 4, temuan = (G.P.jurnal[i] || {}).temuan;
       G.layar(
         '<img class="penonton" src="' + G.IM.penonton + '" alt="">' +
         '<div class="hasil">' +
@@ -156,7 +158,8 @@
           '<h1 class="hasil-judul">' + judul + '</h1>' +
           '<img class="hasil-lencana" src="' + (akhir ? G.IM.piala : G.IM.lencana(i)) + '" alt="' + (akhir ? 'Piala' : 'Lencana') + '">' +
           '<div class="hasil-bt">' + [1, 2, 3].map(function (k) { return '<span class="bt-pop" style="animation-delay:' + (0.35 + k * 0.4) + 's">' + G.bintang(s >= k, 76) + '</span>'; }).join('') + '</div>' +
-          '<div class="hasil-bisa"><small>' + STR.hasil.kamuBisa + '</small>' + STR.level[i].bisa + '</div>' +
+          '<div class="hasil-kotak"><div class="hasil-bisa"><small>' + STR.hasil.kamuBisa + '</small>' + STR.level[i].bisa + '</div>' +
+          (temuan ? '<div class="hasil-bisa hasil-temuan"><small>' + G.ikon('bk', 18) + STR.hasil.temuan + '</small>' + G.esc(temuan) + '</div>' : '') + '</div>' +
           '<div class="baris-tombol tengah">' +
             '<button class="btn btn-teal" data-a="ulang">' + G.ikon('ulang', 26) + '<span>' + STR.hasil.ulangi + '</span></button>' +
             '<button class="btn btn-emas" data-a="lanjut" autofocus>' + G.ikon('kanan', 26) + '<span>' + (akhir ? STR.hasil.keMenu : STR.hasil.lanjut) + '</span></button>' +
@@ -208,14 +211,17 @@
 
   /* ---------- Catatan untuk Guru ---------- */
   G.catatanGuru = function () {
+    G.aksi.jurnalGuru = G.jurnalModal;
     var baris = STR.level.map(function (L, i) {
-      var main = G.P.main[i];
+      var main = G.P.main[i], j = G.P.jurnal[i] || {};
+      var tb = i === 4 || j.tebakBenar == null ? '-' : j.tebakBenar ? STR.guru.tebakTepat : '<b class="beda">' + STR.guru.tebakBeda + '</b>';
       return '<tr><td><b>' + (i + 1) + '. ' + L.nama + '</b></td><td>' + L.guru + '</td><td class="c">' +
-        (G.P.s[i] ? G.bintang3(G.P.s[i], 22) : '<span class="redup">' + STR.guru.belum + '</span>') + '</td><td class="c">' + main + '</td><td class="c">' + (main ? G.P.salah[i] : '-') + '</td></tr>';
+        (G.P.s[i] ? G.bintang3(G.P.s[i], 22) : '<span class="redup">' + STR.guru.belum + '</span>') + '</td><td class="c">' + main + '</td><td class="c">' + (main ? G.P.salah[i] : '-') + '</td><td class="c">' + tb + '</td></tr>';
     }).join('');
     G.modal(STR.guru.judul, 'papan',
       '<p class="pengantar">' + STR.guru.pengantar + '</p>' +
       '<table class="tabel"><thead><tr>' + STR.guru.kolom.map(function (k) { return '<th>' + k + '</th>'; }).join('') + '</tr></thead><tbody>' + baris + '</tbody></table>' +
+      '<div class="baris-tombol"><button class="btn btn-ungu btn-kecil" data-a="jurnalGuru">' + G.ikon('bk', 24) + '<span>' + STR.lab.jurnal + '</span></button></div>' +
       '<h3>' + G.ikon('ok', 28) + STR.guru.saran + '</h3>' + STR.guru.saranIsi.map(function (s) { return '<div class="pr">' + G.ikon('kanan', 22) + '<span>' + s + '</span></div>'; }).join(''), 1060);
   };
 })();

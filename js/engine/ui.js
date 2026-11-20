@@ -88,9 +88,11 @@
   G.ke = function (fn) {
     var args = Array.prototype.slice.call(arguments, 1);
     G.bersihkanTimer(); G.tutupModal(); G.petunjuk(null);
+    A.mikMati(); A.busPutus(); if (G.diamBaca) G.diamBaca();
     G.onKey = G.onKeyUp = null;
     var jalan = function () {
-      G.aksi = {}; G.test.selesaikan = null;
+      G.aksi = {}; G.test.selesaikan = null; A.busBaru();
+      $('#fx').innerHTML = '';   /* sisa konfeti layar sebelumnya */
       fn.apply(null, args);
       G.layarAktif = fn.namaLayar || '';
       $('#v').scrollTop = 0;
@@ -107,6 +109,8 @@
 
   /* Tulis isi layar. latar: 'latar' | 'malam' | 'key'. */
   G.layar = function (html, latar) {
+    /* Tahap baru di dalam satu latihan: batalkan timer dan kendali keyboard tahap sebelumnya. */
+    G.bersihkanTimer(); G.onKey = G.onKeyUp = null; if (G.diamBaca) G.diamBaca();
     var g = $('#g');
     g.setAttribute('data-latar', latar || 'latar');
     $('#v').innerHTML = html;
