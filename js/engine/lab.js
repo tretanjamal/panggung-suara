@@ -98,7 +98,7 @@
           (i < tahap ? G.ikon('ok', 18) : '<i>' + (i + 1) + '</i>') + '<span>' + t + '</span></li>';
       }).join('') + '</ol>' +
       '<div class="hud-bt">' + G.bintang3(G.P.s[lv], 26) + '</div>' +
-      G.tombolSuara() + '</header>';
+      G.tombolSuara() + G.tombolLayar() + '</header>';
   };
 
   /* Pindahkan penanda tahap tanpa menggambar ulang layar. */

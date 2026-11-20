@@ -41,6 +41,8 @@
     gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1A1.7 1.7 0 009 19.4a1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1A1.7 1.7 0 004.6 9a1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/>',
     lock: '<rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 018 0v3"/>',
     snd: '<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12"/>',
+    penuh: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+    kecil: '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>',
     mute: '<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/>',
     ulang: '<path d="M4 12a8 8 0 1 0 2.5-5.8"/><path d="M4 4v4.5h4.5"/>',
     home: '<path d="M3 11l9-7 9 7M5 9.5V20h5v-6h4v6h5V9.5"/>',
@@ -126,7 +128,7 @@
       '<div class="hud-judul"><img src="' + G.IM.ikon(lv) + '" alt=""><span>' + (lv + 1) + ' · ' + STR.level[lv].nama + '</span></div>' +
       '<div class="hud-dot" aria-label="Kemajuan">' + dots + '</div>' +
       '<div class="hud-bt">' + G.bintang3(G.P.s[lv], 28) + '</div>' +
-      G.tombolSuara() + '</header>';
+      G.tombolSuara() + G.tombolLayar() + '</header>';
   };
   G.tombolSuara = function () {
     G.aksi.suara = function (el) {
@@ -135,6 +137,35 @@
       el.innerHTML = G.ikon(G.O.snd ? 'snd' : 'mute', 30); el.setAttribute('aria-pressed', !G.O.snd);
     };
     return '<button class="btn btn-ikon" data-a="suara" aria-label="Bunyi nyala/mati" aria-pressed="' + !G.O.snd + '">' + G.ikon(G.O.snd ? 'snd' : 'mute', 30) + '</button>';
+  };
+
+  /* ---------- Layar penuh (tombol hanya muncul bila perangkat mendukung) ---------- */
+  var akar = document.documentElement;
+  function sedangPenuh() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+  G.bisaPenuh = !!(akar.requestFullscreen || akar.webkitRequestFullscreen) && document.fullscreenEnabled !== false;
+  G.layarPenuh = function () {
+    try {
+      if (sedangPenuh()) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); return; }
+      var p = (akar.requestFullscreen || akar.webkitRequestFullscreen).call(akar, { navigationUI: 'hide' });
+      /* di HP: coba kunci posisi mendatar (diabaikan bila browser menolak) */
+      if (p && p.then) p.then(function () { try { screen.orientation.lock('landscape').catch(function () { }); } catch (e) { } }).catch(function () { });
+    } catch (e) { }
+  };
+  function perbaruiTombolLayar() {
+    var on = sedangPenuh();
+    G.$$('[data-a="penuh"]').forEach(function (b) {
+      b.innerHTML = G.ikon(on ? 'kecil' : 'penuh', 30);
+      b.setAttribute('aria-label', on ? STR.keluarPenuh : STR.layarPenuh); b.setAttribute('aria-pressed', on);
+    });
+    setTimeout(G.fit, 80);
+  }
+  document.addEventListener('fullscreenchange', perbaruiTombolLayar);
+  document.addEventListener('webkitfullscreenchange', perbaruiTombolLayar);
+  G.tombolLayar = function () {
+    if (!G.bisaPenuh) return '';
+    G.aksi.penuh = G.layarPenuh;
+    var on = sedangPenuh();
+    return '<button class="btn btn-ikon" data-a="penuh" aria-label="' + (on ? STR.keluarPenuh : STR.layarPenuh) + '" aria-pressed="' + on + '">' + G.ikon(on ? 'kecil' : 'penuh', 30) + '</button>';
   };
 
   /* ---------- Nuri ---------- */

@@ -19,7 +19,7 @@
             '<button class="btn btn-teal" data-a="dev">' + G.ikon('us', 26) + '<span>' + STR.pengembang + '</span></button>' +
           '</div>' +
         '</div>' +
-        '<div class="pojok">' + '<button class="btn btn-ikon" data-a="set" aria-label="' + STR.pengaturan + '">' + G.ikon('gear', 30) + '</button>' + G.tombolSuara() + '</div>' +
+        '<div class="pojok">' + '<button class="btn btn-ikon" data-a="set" aria-label="' + STR.pengaturan + '">' + G.ikon('gear', 30) + '</button>' + G.tombolSuara() + G.tombolLayar() + '</div>' +
       '</div>', 'key');
     G.aksi.mulai = function () { A.buka(); G.ke(G.layarMenu); };
     G.aksi.info = G.info; G.aksi.ref = G.referensi; G.aksi.dev = function () { G.pengembang(0); }; G.aksi.set = G.pengaturan;
@@ -116,7 +116,7 @@
         '<div class="hud-judul polos"><span>' + STR.hub.judul + '</span></div>' +
         '<div class="hud-skor">' + G.bintang(1, 30) + '<b>' + tot + '</b>/15</div>' +
         '<button class="btn btn-ikon" data-a="guru" aria-label="' + STR.catatanGuru + '">' + G.ikon('papan', 30) + '</button>' +
-        G.tombolSuara() +
+        G.tombolSuara() + G.tombolLayar() +
       '</header>' +
       '<div class="menu-isi">' +
         '<div class="menu-nuri">' + G.nuri(selesai ? 'b' : 's', 210) + G.balon(ajak) + '</div>' +

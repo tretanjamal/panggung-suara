@@ -14,6 +14,8 @@ var STR = {
   menu: 'Menu',
   beranda: 'Beranda',
   tutup: 'Tutup',
+  layarPenuh: 'Layar penuh',
+  keluarPenuh: 'Keluar dari layar penuh',
   putar: 'Putar perangkatmu ke posisi mendatar agar panggung terlihat penuh.',
 
   set: {
